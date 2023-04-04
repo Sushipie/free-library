@@ -18,13 +18,15 @@ const pool = new Pool({
 // // GET all books and their authors and genres
 router.get("/books", bookController.getBook);
 
-//get a book by id
-router.get("/books/:id", bookController.getBookById);
-
 /* Add a book to the database with fields
  (title, description, download_link, author_id, genre_id). 
  The request will be a json object with the fields. */
-router.get("/books/create", bookController.create);
+router.get("/books/create", bookController.createGet);
+
+router.post("/books/create", bookController.createPost);
+
+//get a book by id
+router.get("/books/:id", bookController.getBookById);
 
 /* Update a book by id. The request will be a json object with the available fields. */
 router.put("/books/:id/update", bookController.update);

@@ -13,12 +13,28 @@ const pool = new Pool({
 // GET all authors
 
 module.exports.index = function (req, res, next) {
+  var authorArray = [];
+
   pool.query("SELECT * FROM authors", (err, result) => {
     if (err) {
       console.log(err);
     }
-    res.send(result.rows);
+    for (let i = 0; i < result.rows.length; i++) {
+      authorArray.push(result.rows[i]);
+    }
+    console.log(authorArray);
+    res.render("authorList", {
+      title: "Authors",
+      authorArray,
+    });
   });
+
+  // pool.query("SELECT * FROM authors", (err, result) => {
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //   res.send(result.rows);
+  // });
 };
 
 // GET a single author by id

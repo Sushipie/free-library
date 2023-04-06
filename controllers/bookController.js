@@ -1,19 +1,10 @@
-const { Pool, Client } = require("pg");
-
-const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "free-library",
-  password: "mynewpassword",
-  port: 5432,
-});
+const { pool, query } = require("../dbutil");
 
 //export the functions to be used in the routes
 
 module.exports.getBook = function (req, res, next) {
-  //get all the books and put them in an array
   var bookArray = [];
-  pool.query("SELECT title FROM books", (err, result) => {
+  pool.query("SELECT * FROM books", (err, result) => {
     if (err) {
       console.log(err);
     }
@@ -21,10 +12,10 @@ module.exports.getBook = function (req, res, next) {
       bookArray.push(result.rows[i]);
     }
     console.log(bookArray);
-  });
-  res.render("bookList", {
-    title: "Books",
-    bookTitles: bookArray,
+    res.render("bookList", {
+      title: "Books",
+      bookArray,
+    });
   });
 };
 
@@ -33,49 +24,41 @@ module.exports.createGet = function (req, res, next) {
   res.render("bookform", { title: "Add a book" });
 };
 
-module.exports.createPost = function (req, res, next) {
+module.exports.createPost = async function (req, res, next) {
   //if the author or genre does not exist, add it to the database
   const { author, genre } = req.body;
-  pool.query(
-    "SELECT id FROM authors WHERE name = $1",
-    [author],
-    (err, result) => {
-      if (err) {
-        console.log(err);
+
+  const authorname = await query("SELECT id FROM authors WHERE name = $1", [
+    author,
+  ]);
+
+  if (authorname.rows.length == 0) {
+    pool.query(
+      "INSERT INTO authors (name) VALUES ($1)",
+      [author],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        }
       }
-      if (result.rows.length == 0) {
-        pool.query(
-          "INSERT INTO authors (name) VALUES ($1)",
-          [author],
-          (err, result) => {
-            if (err) {
-              console.log(err);
-            }
-          }
-        );
+    );
+  }
+
+  const generename = await query("SELECT id FROM genres WHERE name = $1", [
+    genre,
+  ]);
+
+  if (generename.rows.length == 0) {
+    pool.query(
+      "INSERT INTO genres (name) VALUES ($1)",
+      [genre],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        }
       }
-    }
-  );
-  pool.query(
-    "SELECT id FROM genres WHERE name = $1",
-    [genre],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-      if (result.rows.length == 0) {
-        pool.query(
-          "INSERT INTO genres (name) VALUES ($1)",
-          [genre],
-          (err, result) => {
-            if (err) {
-              console.log(err);
-            }
-          }
-        );
-      }
-    }
-  );
+    );
+  }
 
   //add the book. if the author or genre does not exist, it will be added to the database
   const { title, description, download_link } = req.body;

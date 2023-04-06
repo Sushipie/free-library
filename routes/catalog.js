@@ -32,7 +32,7 @@ router.get("/books/:id", bookController.getBookById);
 router.put("/books/:id/update", bookController.update);
 
 /* Delete a book by id */
-router.delete("/books/:id/delete", bookController.delete);
+router.post("/books/:id/delete", bookController.delete);
 
 //get all authors
 router.get("/authors", authorController.index);

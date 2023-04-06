@@ -1,17 +1,6 @@
-const { Pool, Client } = require("pg");
-
-const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "free-library",
-  password: "mynewpassword",
-  port: 5432,
-});
-
-//export the functions to be used in the routes
+const { pool, query } = require("../dbutil");
 
 // GET all authors
-
 module.exports.index = function (req, res, next) {
   var authorArray = [];
 
@@ -28,13 +17,6 @@ module.exports.index = function (req, res, next) {
       authorArray,
     });
   });
-
-  // pool.query("SELECT * FROM authors", (err, result) => {
-  //   if (err) {
-  //     console.log(err);
-  //   }
-  //   res.send(result.rows);
-  // });
 };
 
 // GET a single author by id
@@ -83,11 +65,25 @@ module.exports.update = function (req, res, next) {
 
 /* Delete an author by id */
 module.exports.delete = function (req, res, next) {
+  //check if author has books by checking if author_id is in books table and if it is, return error
   const id = req.params.id;
-  pool.query("DELETE FROM authors WHERE id = $1", [id], (err, result) => {
-    if (err) {
-      console.log(err);
+  pool.query(
+    "SELECT * FROM books WHERE author_id = $1",
+    [id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      if (result.rows.length > 0) {
+        res.send("Author has books");
+      } else {
+        pool.query("DELETE FROM authors WHERE id = $1", [id], (err, result) => {
+          if (err) {
+            console.log(err);
+          }
+          res.send("Author deleted");
+        });
+      }
     }
-    res.send("Author deleted");
-  });
+  );
 };

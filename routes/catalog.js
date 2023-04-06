@@ -47,7 +47,7 @@ router.post("/authors/create", authorController.create);
 router.put("/authors/:id/update", authorController.update);
 
 //delete an author
-router.delete("/authors/:id/delete", authorController.delete);
+router.post("/authors/:id/delete", authorController.delete);
 
 //get all genres
 router.get("/genres", genreController.index);

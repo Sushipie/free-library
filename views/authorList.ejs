@@ -53,18 +53,22 @@
         </div>
       </div>
     </nav>
-    <h1>Books</h1>
-    <ul class="list-group">
-      <% authorArray.forEach(function(item) { %>
-      <li class="list-group-item">
-        <h5><%= item.name %></h5>
-        
-        <form action="/catalog/books/<%= item.id %>/delete" method="POST">
-          <input type="hidden" name="_method" value="DELETE" /> 
-          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-        </form>
-      </li>    
-      <% }); %>
-    </ul>
+
+    <div style="padding: 20px;">
+      <h1>Books</h1>
+      <ul class="list-group">
+        <% authorArray.forEach(function(item) { %>
+        <li class="list-group-item">
+          <h5><%= item.name %></h5>
+          
+          <form action="/catalog/authors/<%= item.id %>/delete" method="POST">
+            <input type="hidden" name="_method" value="DELETE" /> 
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
+        </li>    
+        <% }); %>
+      </ul>
+    </div>
+    
   </body>
 </html>

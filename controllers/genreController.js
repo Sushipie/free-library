@@ -10,14 +10,22 @@ const pool = new Pool({
 
 //export the functions to be used in the routes
 
-//Get all genres
+//Get all genres from the database and push them to an array
 
 module.exports.index = function (req, res, next) {
+  var genreArray = [];
   pool.query("SELECT * FROM genres", (err, result) => {
     if (err) {
       console.log(err);
     }
-    res.send(result.rows);
+    for (var i = 0; i < result.rows.length; i++) {
+      genreArray.push(result.rows[i]);
+    }
+    //send the array to the view
+    res.render("genreList", {
+      title: "Genres",
+      genreArray,
+    });
   });
 };
 

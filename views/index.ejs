@@ -8,55 +8,12 @@
       crossorigin="anonymous"
     />
     <title><%= title %></title>
-    
-    
   </head>
   <body class="card-body">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavDropdown"
-          aria-controls="navbarNavDropdown"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a
-                class="nav-link active"
-                aria-current="page"
-                href="/catalog/books"
-                >Books</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/catalog/authors">Authors</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/catalog/genres">Genres</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/catalog/books/create"
-                >Add Books</a
-              >
-            </li>
-              
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <div style="padding: 20px;">
+    <%- include('./partials/navbar.ejs'); %>
+    <div style="padding: 20px">
       <h1><%= title %></h1>
       <p>Welcome to <%= title %></p>
     </div>
-   
   </body>
 </html>

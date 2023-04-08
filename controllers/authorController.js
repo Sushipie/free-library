@@ -4,19 +4,36 @@ const { pool, query } = require("../dbutil");
 module.exports.index = function (req, res, next) {
   var authorArray = [];
 
-  pool.query("SELECT * FROM authors", (err, result) => {
-    if (err) {
-      console.log(err);
+  //get all the authors once and join their books
+
+  pool.query(
+    "SELECT authors.id, authors.name, books.title FROM authors LEFT JOIN books ON authors.id = books.author_id",
+
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      for (let i = 0; i < result.rows.length; i++) {
+        let author = authorArray.find(
+          (author) => author.id == result.rows[i].id
+        );
+        if (author) {
+          author.books.push(result.rows[i].title);
+        } else {
+          authorArray.push({
+            id: result.rows[i].id,
+            name: result.rows[i].name,
+            books: [result.rows[i].title],
+          });
+        }
+      }
+      console.log(authorArray);
+      res.render("authorList", {
+        title: "Authors",
+        authorArray,
+      });
     }
-    for (let i = 0; i < result.rows.length; i++) {
-      authorArray.push(result.rows[i]);
-    }
-    console.log(authorArray);
-    res.render("authorList", {
-      title: "Authors",
-      authorArray,
-    });
-  });
+  );
 };
 
 // GET a single author by id
@@ -75,13 +92,15 @@ module.exports.delete = function (req, res, next) {
         console.log(err);
       }
       if (result.rows.length > 0) {
-        res.send("Author has books");
+        res.redirect("/catalog/authors");
+        console.log("Author has books");
       } else {
         pool.query("DELETE FROM authors WHERE id = $1", [id], (err, result) => {
           if (err) {
             console.log(err);
           }
-          res.send("Author deleted");
+          res.redirect("/catalog/authors");
+          console.log("Author deleted");
         });
       }
     }

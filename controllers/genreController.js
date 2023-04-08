@@ -71,11 +71,23 @@ module.exports.update = function (req, res, next) {
 
 /* Delete a genre by id */
 module.exports.delete = function (req, res, next) {
+  //check if the genre has any books by checking if genre_id is in books table and if it is, return error
   const id = req.params.id;
-  pool.query("DELETE FROM genres WHERE id = $1", [id], (err, result) => {
+  pool.query("SELECT * FROM books WHERE genre_id = $1", [id], (err, result) => {
     if (err) {
       console.log(err);
     }
-    res.send("Genre deleted");
+    if (result.rows.length > 0) {
+      //send error message with redirect and flash message to the view to display to the user that the genre has books.
+      res.redirect("/catalog/genres");
+      console.log("Genre has books");
+    } else {
+      pool.query("DELETE FROM genres WHERE id = $1", [id], (err, result) => {
+        if (err) {
+          console.log(err);
+        }
+        res.redirect("/catalog/genres");
+      });
+    }
   });
 };

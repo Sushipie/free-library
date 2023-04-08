@@ -4,19 +4,27 @@ const { pool, query } = require("../dbutil");
 
 module.exports.getBook = function (req, res, next) {
   var bookArray = [];
-  pool.query("SELECT * FROM books", (err, result) => {
-    if (err) {
-      console.log(err);
+  var authorArray = [];
+  var genreArray = [];
+
+  //get theh books and their authors and genres and send both author and genres names and ids to the bookList.ejs view
+
+  pool.query(
+    "SELECT books.id, books.title, books.description, books.download_link,  books.author_id, books.genre_id, authors.name AS author, genres.name AS genre FROM books INNER JOIN authors ON books.author_id = authors.id INNER JOIN genres ON books.genre_id = genres.id",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      for (let i = 0; i < result.rows.length; i++) {
+        bookArray.push(result.rows[i]);
+      }
+      console.log(bookArray);
+      res.render("bookList", {
+        title: "Books",
+        bookArray,
+      });
     }
-    for (let i = 0; i < result.rows.length; i++) {
-      bookArray.push(result.rows[i]);
-    }
-    console.log(bookArray);
-    res.render("bookList", {
-      title: "Books",
-      bookArray,
-    });
-  });
+  );
 };
 
 module.exports.createGet = function (req, res, next) {
@@ -69,7 +77,8 @@ module.exports.createPost = async function (req, res, next) {
       if (err) {
         console.log(err);
       }
-      res.send("Book added");
+      module.exports.getBook(req, res, next);
+      console.log("Book added");
     }
   );
 };
@@ -115,6 +124,7 @@ module.exports.delete = function (req, res, next) {
     if (err) {
       console.log(err);
     }
-    res.send("Book deleted");
+    module.exports.getBook(req, res, next);
+    console.log("Book deleted");
   });
 };

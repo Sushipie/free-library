@@ -5,16 +5,6 @@ const bookController = require("../controllers/bookController");
 const authorController = require("../controllers/authorController");
 const genreController = require("../controllers/genreController");
 
-const { Pool, Client } = require("pg");
-
-const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "free-library",
-  password: "mynewpassword",
-  port: 5432,
-});
-
 // // GET all books and their authors and genres
 router.get("/books", bookController.getBook);
 
@@ -62,6 +52,6 @@ router.post("/genres/create", genreController.create);
 router.put("/genres/:id/update", genreController.update);
 
 //delete a genre
-router.delete("/genres/:id/delete", genreController.delete);
+router.post("/genres/:id/delete", genreController.delete);
 
 module.exports = router;

@@ -8,7 +8,6 @@ module.exports.index = function (req, res, next) {
 
   pool.query(
     "SELECT authors.id, authors.name, books.title FROM authors LEFT JOIN books ON authors.id = books.author_id",
-
     (err, result) => {
       if (err) {
         console.log(err);
@@ -39,12 +38,29 @@ module.exports.index = function (req, res, next) {
 // GET a single author by id
 module.exports.getAuthorById = function (req, res, next) {
   const id = req.params.id;
-  pool.query("SELECT * FROM authors WHERE id = $1", [id], (err, result) => {
-    if (err) {
-      console.log(err);
+  //join the books of the author to the author
+  pool.query(
+    "SELECT authors.id, authors.name, books.title FROM authors LEFT JOIN books ON authors.id = books.author_id WHERE authors.id = $1",
+    [id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      var author = {
+        id: result.rows[0].id,
+        name: result.rows[0].name,
+        books: [],
+      };
+      for (let i = 0; i < result.rows.length; i++) {
+        author.books.push(result.rows[i].title);
+      }
+      console.log(author);
+      res.render("authorView", {
+        title: author.name,
+        books: author.books,
+      });
     }
-    res.send(result.rows);
-  });
+  );
 };
 
 /* Add an author to the database with fields

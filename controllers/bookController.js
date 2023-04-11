@@ -1,6 +1,8 @@
 const { pool, query } = require("../dbutil");
 
 //export the functions to be used in the routes
+//import validation functions
+const { body, validationResult } = require("express-validator");
 
 module.exports.getBook = function (req, res, next) {
   var bookArray = [];
@@ -27,6 +29,17 @@ module.exports.getBook = function (req, res, next) {
   );
 };
 
+const validate = (req, res, next) => {
+  return new Promise((resolve, reject) => {
+    body("title", "Title must not be empty.")
+      .trim()
+      .isLength({ min: 1 })
+      .escape()(req, res, () => {
+      resolve();
+    });
+  });
+};
+
 module.exports.createGet = function (req, res, next) {
   //send the bookForm.ejs view
   res.render("bookform", { title: "Add a book" });
@@ -34,7 +47,12 @@ module.exports.createGet = function (req, res, next) {
 
 module.exports.createPost = async function (req, res, next) {
   //if the author or genre does not exist, add it to the database
+
+  validate(req, res, next);
+
   const { author, genre } = req.body;
+
+  //check if author are genere are valid
 
   const authorname = await query("SELECT id FROM authors WHERE name = $1", [
     author,

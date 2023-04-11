@@ -32,12 +32,29 @@ module.exports.index = function (req, res, next) {
 //Get a single genre by id
 module.exports.getGenreById = function (req, res, next) {
   const id = req.params.id;
-  pool.query("SELECT * FROM genres WHERE id = $1", [id], (err, result) => {
-    if (err) {
-      console.log(err);
+  //join the books of the genre to the genre
+  pool.query(
+    "SELECT genres.id, genres.name, books.title FROM genres LEFT JOIN books ON genres.id = books.genre_id WHERE genres.id = $1",
+    [id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      var genre = {
+        id: result.rows[0].id,
+        name: result.rows[0].name,
+        books: [],
+      };
+      for (let i = 0; i < result.rows.length; i++) {
+        genre.books.push(result.rows[i].title);
+      }
+      console.log(genre);
+      res.render("genreView", {
+        title: genre.name,
+        books: genre.books,
+      });
     }
-    res.send(result.rows);
-  });
+  );
 };
 
 /* Add a genre to the database with fields

@@ -1,6 +1,9 @@
 var express = require("express");
 var router = express.Router();
 
+//import validation functions
+const { body, validationResult } = require("express-validator");
+
 const bookController = require("../controllers/bookController");
 const authorController = require("../controllers/authorController");
 const genreController = require("../controllers/genreController");
@@ -13,7 +16,39 @@ router.get("/books", bookController.getBook);
  The request will be a json object with the fields. */
 router.get("/books/create", bookController.createGet);
 
-router.post("/books/create", bookController.createPost);
+router.post(
+  "/books/create",
+  body("title", "Title must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("description", "Description must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("download_link", "Download link must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("author", "Author must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("genre", "Genre must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.send(errors.array());
+      return;
+    } else {
+      bookController.createPost(req, res, next);
+    }
+  }
+);
 
 //get a book by id
 router.get("/books/:id", bookController.getBookById);

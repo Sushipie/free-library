@@ -24,17 +24,29 @@
       <ul class="list-group">
         <% bookArray.forEach(function(item) { %>
         <li class="list-group-item">
-          <h5><%= item.title %></h5>
+          <h5>
+            <a style="text-decoration: none" href="/catalog/books/<%=item.id%>"
+              ><%= item.title %></a
+            >
+          </h5>
           <p><%= item.description %></p>
           <p>
-            Author:
+            <strong> Author: </strong>
             <a
               style="text-decoration: none"
               href="/catalog/authors/<%=item.author_id %>"
               ><%= item.author %></a
             >
           </p>
-          <p>Genre: <%= item.genre %></p>
+          <p>
+            <strong> Genre:</strong>
+            <a
+              style="text-decoration: none"
+              href="/catalog/genres/<%= item.genre_id %>"
+            >
+              <%=item.genre %></a
+            >
+          </p>
           <div class="btn-group">
             <a href="<%= item.download_link %>"
               ><button type="button" class="btn btn-success btn-sm">

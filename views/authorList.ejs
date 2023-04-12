@@ -15,12 +15,24 @@
   </head>
   <body>
     <%- include('./partials/navbar.ejs'); %>
+
+   
+    <% if (error) { %>
+    <div class="alert alert-danger" role="alert">
+      <%= error %>
+    </div>
+    <% } %>
+
     <div style="padding: 20px">
       <h1><%= title %></h1>
       <ul class="list-group">
         <% authorArray.forEach(function(item) { %>
         <li class="list-group-item">
-          <h5><%= item.name %></h5>
+        <h5>
+          <a style="text-decoration: none;" 
+          href="/catalog/authors/<%= item.id %>">
+          <%= item.name %></a>
+        </h5>
           <p>
             <strong>Books:</strong>
             <ul>

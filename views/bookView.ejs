@@ -15,29 +15,16 @@
       integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
       crossorigin="anonymous"
     ></script>
-    <title><%= title %></title>
+    <title>Document</title>
   </head>
   <body>
     <%- include('./partials/navbar.ejs'); %>
     <div style="padding: 20px">
-      <h1>Genres</h1>
-      <ul class="list-group">
-        <% genreArray.forEach(function(item) { %>
-        <li class="list-group-item">
-          <h5>
-            <a
-              style="text-decoration: none"
-              href="/catalog/genres/<%=item.id %>"
-              ><%= item.name %></a
-            >
-          </h5>
-          <form action="/catalog/genres/<%= item.id %>/delete" method="POST">
-            <input type="hidden" name="_method" value="DELETE" />
-            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-          </form>
-        </li>
-        <% }); %>
-      </ul>
+      <h1><%= title%></h1>
+      <p><%= description%></p>
+      <p><%= author%></p>
+      <p><%= genre%></p>
+      <a href="<%= downloadlink%>">Download</a>
     </div>
   </body>
 </html>

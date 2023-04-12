@@ -42,8 +42,17 @@ router.post(
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.send(errors.array());
-      return;
+      console.log(errors.array());
+      //store the error messages in an array
+      var errorsArray = [];
+      for (let i = 0; i < errors.array().length; i++) {
+        errorsArray.push(errors.array()[i].msg);
+      }
+      console.log(errorsArray);
+      res.render("bookForm", {
+        title: "Add a book",
+        errors: errorsArray,
+      });
     } else {
       bookController.createPost(req, res, next);
     }

@@ -1,12 +1,24 @@
 const { Pool, Client } = require("pg");
+const connectionString =
+  "postgresql://postgres:pUadyD1awDazDeakOAPL@containers-us-west-71.railway.app:6741/railway";
 
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "free-library",
-  password: "mynewpassword",
-  port: 5432,
+  connectionString,
 });
+
+const client = new Client({
+  connectionString,
+});
+client.connect();
+
+// const pool = new Pool({
+//   url: process.env.DATABASE_URL,
+//   user: "postgres",
+//   host: "localhost",
+//   database: "free-library",
+//   password: "mynewpassword",
+//   port: 5432,
+// });
 
 // Create a custom query function that returns a promise with the query results
 const query = function (text, params) {

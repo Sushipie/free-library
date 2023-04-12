@@ -3,9 +3,7 @@ const { pool, query } = require("../dbutil");
 // GET all authors
 module.exports.index = function (req, res, next) {
   var authorArray = [];
-
   //get all the authors once and join their books
-
   pool.query(
     "SELECT authors.id, authors.name, books.title FROM authors LEFT JOIN books ON authors.id = books.author_id",
     (err, result) => {
@@ -30,6 +28,7 @@ module.exports.index = function (req, res, next) {
       res.render("authorList", {
         title: "Authors",
         authorArray,
+        error: "",
       });
     }
   );
@@ -109,6 +108,8 @@ module.exports.delete = function (req, res, next) {
       }
       if (result.rows.length > 0) {
         res.redirect("/catalog/authors");
+        //TODO: add error message
+
         console.log("Author has books");
       } else {
         pool.query("DELETE FROM authors WHERE id = $1", [id], (err, result) => {

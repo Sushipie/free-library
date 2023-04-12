@@ -42,7 +42,7 @@ const validate = (req, res, next) => {
 
 module.exports.createGet = function (req, res, next) {
   //send the bookForm.ejs view
-  res.render("bookform", { title: "Add a book" });
+  res.render("bookForm", { title: "Add a book", errors: "" });
 };
 
 module.exports.createPost = async function (req, res, next) {
@@ -111,7 +111,14 @@ module.exports.getBookById = function (req, res, next) {
       if (err) {
         console.log(err);
       }
-      res.send(result.rows);
+      res.render("bookView", {
+        title: result.rows[0].title,
+        description: result.rows[0].description,
+        author: result.rows[0].author,
+        genre: result.rows[0].genre,
+        downloadlink: result.rows[0].download_link,
+      });
+      console.log(result.rows);
     }
   );
 };
@@ -143,6 +150,7 @@ module.exports.delete = function (req, res, next) {
       console.log(err);
     }
     module.exports.getBook(req, res, next);
+
     console.log("Book deleted");
   });
 };

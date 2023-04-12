@@ -1,12 +1,4 @@
-const { Pool, Client } = require("pg");
-
-const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "free-library",
-  password: "mynewpassword",
-  port: 5432,
-});
+const { pool, query } = require("../dbutil");
 
 //export the functions to be used in the routes
 
@@ -14,19 +6,34 @@ const pool = new Pool({
 
 module.exports.index = function (req, res, next) {
   var genreArray = [];
-  pool.query("SELECT * FROM genres", (err, result) => {
-    if (err) {
-      console.log(err);
+
+  //get the genres and their books and send both author and genres names and ids to the bookList.ejs view
+
+  pool.query(
+    "SELECT * FROM genres LEFT JOIN books ON genres.id = books.genre_id  ",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      for (let i = 0; i < result.rows.length; i++) {
+        let genre = genreArray.find((genre) => genre.id == result.rows[i].id);
+        if (genre) {
+          genre.books.push(result.rows[i].title);
+        } else {
+          genreArray.push({
+            id: result.rows[i].id,
+            name: result.rows[i].name,
+            books: [result.rows[i].title],
+          });
+        }
+      }
+      console.log(genreArray);
+      res.render("genreList", {
+        title: "Genres",
+        genreArray,
+      });
     }
-    for (var i = 0; i < result.rows.length; i++) {
-      genreArray.push(result.rows[i]);
-    }
-    //send the array to the view
-    res.render("genreList", {
-      title: "Genres",
-      genreArray,
-    });
-  });
+  );
 };
 
 //Get a single genre by id
